@@ -6,15 +6,15 @@ MAINTAINER sudoz <me@isudox.com>
 
 ENV VER 2.5.6
 ENV URL https://github.com/shadowsocks/shadowsocks-libev/archive/v$VER.tar.gz
-ENV DIR shadowsocks-libev-$SS_VER
-ENV DEP asciidoc autoconf build-base curl libtool linux-headers openssl-dev pcre-dev tar xmlto
+ENV DIR shadowsocks-libev-$VER
+ENV DEP asciidoc autoconf build-base curl libtool linux-headers openssl-dev libpcre3-dev tar xmlto zlib1g-dev
 
 ENV ADDR    0.0.0.0
 ENV PORT    8388
-ENV ENCRYPT aes-256-cfb
+ENV METHOD aes-256-cfb
 ENV TIMEOUT 300
 ENV DNS     8.8.8.8
-ENV PWD=
+ENV PASSWORD=
 
 RUN set -ex && \
     apk add --no-cache --virtual .build-deps $DEP && \
@@ -34,17 +34,16 @@ RUN set -ex && \
     apk del .build-deps && \
     rm -rf /tmp/*
 
-VOLUME ["/etc/"]
-
-EXPOSE $PORT/tcp $PORT/udp
+EXPOSE $PORT/tcp
+EXPOSE $PORT/udp
 
 CMD ss-server -s $ADDR \
               -p $PORT \
               -k ${PASSWORD:-$(hostname)} \
-              -m $ENCRYPT \
+              -m $METHOD \
               -t $TIMEOUT \
               --fast-open \
               -d $DNS \
               -u
 
-# docker run -d -e ENCRYPT=aes-256-cfb -e PWD=123456 -p 8388:8388 --restart always sudoz/shadowsocks-libev
+# docker run -d -e METHOD=aes-256-cfb -e PASSWORD=123456 -p 8388:8388 --restart always sudoz/shadowsocks-libev
