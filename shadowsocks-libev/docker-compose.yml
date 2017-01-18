@@ -1,0 +1,9 @@
+shadowsocks:
+  image: sudoz/shadowsocks-libev
+  ports:
+    - "8388:8388/tcp"
+    - "8388:8388/udp"
+  environment:
+    - ENCRYPT=aes-256-cfb
+    - PWD=123456
+  restart: always
