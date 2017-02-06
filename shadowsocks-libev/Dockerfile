@@ -1,19 +1,21 @@
 # shadowsocks-libev on Debian/Ubuntu
-# Version: 0.0.1
+# Version: 0.0.2
 
 FROM alpine
 MAINTAINER sudoz <me@isudox.com>
 
-ENV VER 2.5.6
-ENV URL https://github.com/shadowsocks/shadowsocks-libev/archive/v$VER.tar.gz
+ENV VER 3.0.0
+ENV URL https://github.com/shadowsocks/shadowsocks-libev/releases/download/v$VER/shadowsocks-libev-$VER.tar.gz
 ENV DIR shadowsocks-libev-$VER
-ENV DEP asciidoc autoconf build-base curl libtool linux-headers openssl-dev pcre-dev tar xmlto
+ENV DEP autoconf build-base curl libev-dev libtool linux-headers libsodium-dev mbedtls-dev pcre-dev tar udns-dev
+ENV RUN_DEP libcrypto1.0 libev libsodium mbedtls pcre udns
 
 ENV ADDR      0.0.0.0
 ENV PORT      8388
 ENV METHOD    aes-256-cfb
 ENV TIMEOUT   300
 ENV DNS       8.8.8.8
+ENV DNS_2     8.8.4.4
 ENV PASSWORD=
 
 RUN set -ex && \
@@ -23,6 +25,13 @@ RUN set -ex && \
         ./configure --disable-documentation && \
         make install && \
         cd .. && \
+    runDeps="$( \
+        scanelf --needed --nobanner /usr/bin/ss-* \
+            | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
+            | xargs -r apk info --installed \
+            | sort -u \
+    )" && \
+    apk add --no-cache --virtual .run-deps $runDeps && \
     apk del .build-deps && \
     rm -rf $DIR
 
@@ -36,6 +45,7 @@ CMD ss-server -s $ADDR \
               -t $TIMEOUT \
               --fast-open \
               -d $DNS \
+              -d $DNS_2 \
               -u
 
 # docker run -d -e METHOD=aes-256-cfb -e PASSWORD=123456 -p 8388:8388 --restart always sudoz/shadowsocks-libev
