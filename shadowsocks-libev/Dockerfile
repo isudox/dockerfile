@@ -8,8 +8,6 @@ ENV VER 3.0.0
 ENV URL https://github.com/shadowsocks/shadowsocks-libev/releases/download/v$VER/shadowsocks-libev-$VER.tar.gz
 ENV DIR shadowsocks-libev-$VER
 ENV DEP autoconf build-base curl libev-dev libtool linux-headers libsodium-dev mbedtls-dev pcre-dev tar udns-dev
-ENV RUN_DEP libcrypto1.0 libev libsodium mbedtls pcre udns
-
 ENV ADDR      0.0.0.0
 ENV PORT      8388
 ENV METHOD    aes-256-cfb
@@ -22,15 +20,17 @@ RUN set -ex && \
     apk add --no-cache --virtual .build-deps $DEP && \
     curl -sSL $URL | tar xz && \
     cd $DIR && \
-        ./configure --disable-documentation && \
+        ./configure --prefix=/usr --disable-documentation && \
         make install && \
         cd .. && \
+
     runDeps="$( \
         scanelf --needed --nobanner /usr/bin/ss-* \
             | awk '{ gsub(/,/, "\nso:", $2); print "so:" $2 }' \
             | xargs -r apk info --installed \
             | sort -u \
     )" && \
+
     apk add --no-cache --virtual .run-deps $runDeps && \
     apk del .build-deps && \
     rm -rf $DIR
