@@ -4,7 +4,7 @@
 FROM alpine
 MAINTAINER sudoz <me@isudox.com>
 
-ENV VER 3.0.7
+ENV VER 3.0.8
 ENV URL https://github.com/shadowsocks/shadowsocks-libev/releases/download/v$VER/shadowsocks-libev-$VER.tar.gz
 ENV DIR shadowsocks-libev-$VER
 ENV DEP autoconf build-base curl libev-dev libtool linux-headers libsodium-dev mbedtls-dev pcre-dev tar udns-dev
