@@ -1,8 +1,8 @@
 shadowsocks:
   image: sudoz/shadowsocks-libev
   ports:
-    - "8388:8388/tcp"
-    - "8388:8388/udp"
+    - "12134:12134/tcp"
+    - "12134:12134/udp"
   environment:
     - METHOD=aes-256-cfb
     - PASSWORD=123456
