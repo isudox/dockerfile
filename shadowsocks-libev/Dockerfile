@@ -4,9 +4,9 @@
 FROM alpine
 MAINTAINER sudoz <me@isudox.com>
 
-ARG VER 3.1.0
-ARG URL https://github.com/shadowsocks/shadowsocks-libev/releases/download/v$VER/shadowsocks-libev-$VER.tar.gz
-ENV DEP autoconf build-base curl libev-dev libtool linux-headers libsodium-dev mbedtls-dev pcre-dev tar udns-dev
+ARG VER=3.1.0
+ARG URL=https://github.com/shadowsocks/shadowsocks-libev/releases/download/v$VER/shadowsocks-libev-$VER.tar.gz
+
 ENV ADDR      0.0.0.0
 ENV PORT      12134
 ENV METHOD    aes-256-cfb
